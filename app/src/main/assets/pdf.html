@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+
+  <title>Document</title> 
+
+  </script><script src=".\pdf.js"></script>
+
+  <style type="text/css">
+
+      #the-canvas{
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+      }
+
+  </style>
+
+</head>
+<body>
+  <div>
+    <button id="prev" onclick="goPrevious()">Previous</button>
+    <button id="next" onclick="goNext()">Next</button>
+    &nbsp; &nbsp;
+    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+  </div>
+  
+  <div>
+    <canvas id="the-canvas" ></canvas>
+  </div>
+
+  
+  <script type="text/javascript">
+
+
+  
+    PDFJS.disableWorker = true;
+
+    var pdfDoc = null,
+        pageNum = 1,
+        scale = 0.8,
+        canvas = document.getElementById('the-canvas'),
+        ctx = canvas.getContext('2d');
+
+    
+    function renderPage(num) {
+      // Using promise to fetch the page
+      pdfDoc.getPage(num).then(function(page) {
+        var viewport = page.getViewport(scale);
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Render PDF page into canvas context
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        page.render(renderContext);
+      });
+
+      // Update page counters
+      document.getElementById('page_num').textContent = pageNum;
+      document.getElementById('page_count').textContent = pdfDoc.numPages;
+    }
+
+   
+    function goPrevious() {
+      if (pageNum <= 1)
+        return;
+      pageNum--;
+      renderPage(pageNum);
+    }
+
+   
+    function goNext() {
+      if (pageNum >= pdfDoc.numPages)
+        return;
+      pageNum++;
+      renderPage(pageNum);
+    }
+
+
+    function getpdf() {
+          var fileUrl =client.test();
+         //alert(fileUrl);
+          PDFJS.getDocument(fileUrl).then(function getPdfHelloWorld(_pdfDoc) {
+          pdfDoc = _pdfDoc;
+          renderPage(pageNum);
+       });
+    }
+
+ function getpdf2(fileurl) {
+          PDFJS.getDocument(fileurl).then(function getPdfHelloWorld(_pdfDoc) {
+          pdfDoc = _pdfDoc;
+          renderPage(pageNum);
+           if(_pdfDoc!=null){
+            client.dismissProgress();
+          }
+       });
+ }
+
+
+  </script>  
+</body>
+</html>
+
+
+
+
